@@ -16,7 +16,7 @@ use App\User;
 */
 
 
-Route::post('/logout', 'AuthController@logout');
+Route::post('logout', 'AuthController@logout');
 
 Route::post('register', 'AuthController@register');
 
