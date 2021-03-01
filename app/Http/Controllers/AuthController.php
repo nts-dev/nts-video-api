@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Http\Request;
 use Firebase\Auth\Token\Exception\InvalidToken;
+use Illuminate\Support\Facades\Hash;
 
 //use Kreait\Firebase\Auth;
 
@@ -167,8 +168,20 @@ class AuthController extends Controller
     }
 
     private function handleOfflineLogin(Request $request){
-        $user = User::where('email', 'kennan.online@gmail.com')->first();
-                   
+      
+
+        $user = User::where('email', $request->get('email'))->first();
+
+
+        if (!Hash::check($request->get('password'), $user->password))
+            return response()->json([
+            'message' => 'Current password is incorrect',
+            'success' => false
+            ], 401);
+
+
+    
+                            
 
                     // return response()->json([
                     //     'id' => bcrypt($request->password),
