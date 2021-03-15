@@ -148,6 +148,12 @@ class UploadController extends Controller
         return UploadResource::collection(Upload::with(['views', 'subtitle'])->where('subject_id', '=', $id)->get());
     }
 
+
+    public function uploadsInCategory($id)
+    {
+        return UploadResource::collection(Upload::with(['views', 'subtitle'])->where('module_id', '=', $id)->get());
+    }
+
     /**
      * Remove the specified resource from storage.
      *

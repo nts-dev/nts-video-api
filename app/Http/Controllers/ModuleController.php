@@ -13,7 +13,7 @@ class ModuleController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
     /**
@@ -45,7 +45,7 @@ class ModuleController extends Controller
     {
         //
         $item = Module::create([
-            'user_id' => $request->user()->id,
+            'user_id' => 1,
             'subject_id' => $request->subject_id,
             'institution_id' => $request->institution_id,
             'title' => $request->title,
@@ -79,9 +79,9 @@ class ModuleController extends Controller
     {
         $module = Module::find($id);
 
-        if ($request->user()->id !== $module->user_id) {
-            return response()->json(['error' => 'You can only edit your own uploads.'], 403);
-        }
+        // if ($request->user()->id !== $module->user_id) {
+        //     return response()->json(['error' => 'You can only edit your own uploads.'], 403);
+        // }
 
 
         if ($module->update($request->only(['subject_id', 'institution_id', 'title', 'description']))) {

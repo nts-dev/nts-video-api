@@ -26,8 +26,8 @@ class ModuleResource extends JsonResource
             'user_id' => $this->user_id,
             'created_at' => (string) $this->created_at,
             'updated_at' => (string) $this->updated_at,
-            'subject' => Collect(Subject::find($this->subject)),
-            'uploads' => UploadResource::collection($this->uploads)
+            // 'subject' => Collect(Subject::find($this->subject)),
+            // 'uploads' => UploadResource::collection($this->uploads)
 
         ];
     }

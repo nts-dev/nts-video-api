@@ -35,6 +35,8 @@ Route::apiResource('videos', 'UploadController');
 
 Route::get('/videos/subjects/{id}', 'UploadController@uploadsInSubject');
 
+Route::get('/videos/category/{id}', 'UploadController@uploadsInSubject');
+
 Route::apiResource('modules', 'ModuleController');
 
 Route::apiResource('profiles', 'ProfileController');
