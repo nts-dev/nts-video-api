@@ -18,7 +18,7 @@ class UploadController extends Controller
 
     public function __construct()
     {
-//        $this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -35,14 +35,14 @@ class UploadController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
 
 
-        if (!$request->hasFile('media'))
-            return response()->json(['data' => null, 'error' => 'Request has no media file'], 403);
+//        if (!$request->hasFile('media'))
+//            return response()->json(['data' => null, 'error' => 'Request has no media file'], 403);
 
 
         $upload = Upload::create([
@@ -58,47 +58,16 @@ class UploadController extends Controller
             'videoLink' => '/manifest.m3u',
         ]);
 
-        if ($upload) {
-            if ($this->uploadFile($request, $upload->id))
-                return response()->json(['data' => $upload, 'error' => null], $this->createdStatus);
-            else return response()->json(['data' => null, 'error' => 'Problem while uploading file'], 403);
-        } else return response()->json(['data' => null, 'error' => 'Problem while persisting data'], 403);
+        return response()->json([
+            "success" => true,
+            "message" => "File successfully uploaded",
+            "Upload" => $upload,
+        ]);
+
+
     }
 
-    private function uploadFile(Request $request, $uploadId)
-    {
 
-
-        if ($request->hasFile('media')) {
-
-            //get filename without extension
-            $filename = 'media';
-
-            $projectId = Util::generateProjectId($request->subject_id);
-
-            $categoryId = $request->module_id;
-
-            //get file extension
-            $extension = $request->file('media')->getClientOriginalExtension();
-
-            $filetype = Util::ofFileType($extension);
-
-            //filename to store
-            $filenametostore = $projectId . '/' . $categoryId . '/' . $filetype . '/' . $uploadId . '/' . $filename . '.' . $extension;
-
-            File::makeDirectory($filenametostore, $mode = 0777, true, true);
-
-            $stream = fopen($request->file('media'), 'r+');
-
-            $toObjectStore = Storage::disk('ftp')->put($filenametostore, $stream);
-
-            fclose($stream);
-
-            if ($toObjectStore) return true;
-
-        }
-        return false;
-    }
 
     /**
      * Display the specified resource.

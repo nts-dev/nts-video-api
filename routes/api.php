@@ -39,6 +39,8 @@ Route::get('/videos/category/{id}', 'UploadController@uploadsInSubject');
 
 Route::post('/videos/upload', 'UploadFileController@store');
 
+Route::post('/videos/split', 'UploadFileController@split');
+
 Route::apiResource('modules', 'ModuleController');
 
 Route::apiResource('profiles', 'ProfileController');

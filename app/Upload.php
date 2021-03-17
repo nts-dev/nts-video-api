@@ -8,7 +8,7 @@ class Upload extends Model
 {
     //
 
-    protected $fillable = ['title','description','thumbnailLink','videoLink','module_id','user_id','publish','subject_id', 'upload_folder_index'];
+    protected $fillable = ['title','description','thumbnailLink','videoLink','module_id','user_id','publish','subject_id', 'upload_folder_index', 'raw_link', 'disk'];
 
     public function user(){
         return $this->belongsTo(User::class);
