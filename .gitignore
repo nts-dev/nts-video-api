@@ -3,8 +3,8 @@
 /public/storage
 #/storage/*.key
 #/vendor
-#.env
-#/pem
+.env
+pem
 .env.backup
 .phpunit.result.cache
 Homestead.jsona
