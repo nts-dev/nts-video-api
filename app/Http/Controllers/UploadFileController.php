@@ -12,6 +12,7 @@ use App\Jobs\ConvertToWebMDocumnet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Config;
+use League\Flysystem\FileNotFoundException;
 use Validator, Redirect, Response, File;
 use App\Upload;
 
@@ -111,8 +112,19 @@ class UploadFileController extends Controller
             return response()->json(['error' => 'This record does not exist'], 401);
 
 
-        $stream = Storage::disk('media')->getDriver()
-            ->readStream('P010424\239\video\312\media.mp4');
+        try {
+            $stream = Storage::disk('media')->getDriver()
+                ->readStream('P010424\239\video\312\media.mp4');
+        } catch (FileNotFoundException $e) {
+        }
+
+
+        try {
+            return Storage::disk('media')->getDriver()->getMimetype('P010424\239\video\312\media.mp4');
+        } catch (FileNotFoundException $e) {
+        }
+
+//        response('test.jpg');
 
         $row_file = $request->file('file');
 
