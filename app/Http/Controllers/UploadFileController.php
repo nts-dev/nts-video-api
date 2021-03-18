@@ -104,6 +104,15 @@ class UploadFileController extends Controller
 
         $this->validateInput($request);
 
+        $document = Upload::find($request->id);
+
+
+        if($document == null)
+            return response()->json(['error' => 'This record does not exist'], 401);
+
+
+        $stream = Storage::disk('media')->getDriver()
+            ->readStream('P010424\239\video\312\media.mp4');
 
         $row_file = $request->file('file');
 
@@ -123,9 +132,11 @@ class UploadFileController extends Controller
 
             $media = new Media($file_abs, $PRIMARY_PATH);
 
-            $webMDocument = new WebMDocument($media);
-            $hslDocument = new HSLDocument($media);
-            $thumbnailDocument = new ThumbnailDocument($media);
+
+
+//            $webMDocument = new WebMDocument($media);
+//            $hslDocument = new HSLDocument($media);
+//            $thumbnailDocument = new ThumbnailDocument($media);
 
             /**
              *
@@ -138,16 +149,18 @@ class UploadFileController extends Controller
              *  These exceptions are not thrown, however, when handle is called directly
              */
 
-//            HSLDocument::dispatch($media);
-//            WebMDocument::dispatch($media);
+            HSLDocument::dispatch($media);
+            WebMDocument::dispatch($media);
+            ThumbnailDocument::dispatch($media);
 
-            $hslDocument->handle();
-            $webMDocument->handle();
-            $thumbnailDocument->handle();
+
+//            $hslDocument->handle();
+//            $webMDocument->handle();
+//            $thumbnailDocument->handle();
 
 
 //            store your file into database
-            $document = Upload::find($request->id);
+
             $document->disk = $FILE_PATH;
             $document->raw_link = $file;
             $document->time_encoded = now();
