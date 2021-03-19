@@ -3,9 +3,10 @@
 namespace App\Http\Documents;
 
 
-interface MediaDocument {
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-
+interface MediaDocument extends ShouldQueue {
+    const DISK = 'media';
     function handle();
 
 }

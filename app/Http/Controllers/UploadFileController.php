@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Commons\Util;
 use App\Http\Documents\HSLDocument;
 use App\Http\Documents\ThumbnailDocument;
 use App\Http\Documents\WebMDocument;
@@ -37,6 +38,25 @@ class UploadFileController extends Controller
         }
         return true;
     }
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     *
+     *
+     *
+     *
+     */
 
 
     public function split(Request $request)
@@ -100,6 +120,118 @@ class UploadFileController extends Controller
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     */
+
+    public function encodeExisting(Request $request)
+    {
+
+        $validator = Validator::make($request->all(),
+            [
+                'project_id' => 'required',
+                'id' => 'required',
+                'module_id' => 'required',
+            ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+
+        $DOCID = $request->id;
+
+        $document = Upload::find($DOCID);
+
+
+        if ($document == null)
+            return response()->json(['error' => 'This record does not exist'], 401);
+
+        $PROJECT = Util::generateProjectId($request->project_id);
+
+        $CATEGORY = $request->content_id;
+
+        $VIDEODIRECTORY = $PROJECT . "/" . $CATEGORY . "/video/" . $DOCID;
+
+        $AUDIODIRECTORY = $PROJECT . "/" . $CATEGORY . "/audio/" . $DOCID;
+
+        $VIDEOPATH = $VIDEODIRECTORY . "/media.mp4";
+
+        $AUDIOPATH = $AUDIODIRECTORY . "/media.mp3";
+
+        $videoExists = Storage::disk('media')->exists($VIDEOPATH);
+
+        $audioExists = Storage::disk('media')->exists($AUDIOPATH);
+
+
+        $media = "";
+
+        if ($videoExists) {
+            $media = new Media($VIDEOPATH, $VIDEODIRECTORY);
+        } else if ($audioExists) {
+            $media = new Media($AUDIOPATH, $AUDIODIRECTORY);
+        }
+
+        assert($media != null);
+
+
+        HSLDocument::dispatch($media);
+        WebMDocument::dispatch($media);
+        ThumbnailDocument::dispatch($media);
+
+        $document->disk = $videoExists ? $VIDEODIRECTORY : $AUDIODIRECTORY;
+        $document->raw_link = $videoExists ? $VIDEOPATH : $AUDIOPATH;
+        $document->time_encoded = now();
+        $document->save();
+
+        return response()->json([
+            "success" => true,
+            "message" => "File successfully uploaded",
+            "file" => Storage::disk('media')->get($videoExists ? $VIDEOPATH : $AUDIOPATH),
+            // "type" => $mimeType,
+        ]);
+
+
+    }
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     * @param Request $request
+     * @return false|\Illuminate\Http\JsonResponse|string
+     *
+     *
+     *
+     */
+
     public function store(Request $request)
     {
 
@@ -108,21 +240,21 @@ class UploadFileController extends Controller
         $document = Upload::find($request->id);
 
 
-        if($document == null)
+        if ($document == null)
             return response()->json(['error' => 'This record does not exist'], 401);
 
-
-        try {
-            $stream = Storage::disk('media')->getDriver()
-                ->readStream('P010424\239\video\312\media.mp4');
-        } catch (FileNotFoundException $e) {
-        }
-
-
-        try {
-            return Storage::disk('media')->getDriver()->getMimetype('P010424\239\video\312\media.mp4');
-        } catch (FileNotFoundException $e) {
-        }
+//
+//        try {
+//            $stream = Storage::disk('media')->getDriver()
+//                ->readStream('P010424\239\video\312\media.mp4');
+//        } catch (FileNotFoundException $e) {
+//        }
+//
+//
+//        try {
+//            return Storage::disk('media')->getDriver()->getMimetype('P010424\239\video\312\media.mp4');
+//        } catch (FileNotFoundException $e) {
+//        }
 
 //        response('test.jpg');
 
@@ -145,7 +277,6 @@ class UploadFileController extends Controller
             $media = new Media($file_abs, $PRIMARY_PATH);
 
 
-
 //            $webMDocument = new WebMDocument($media);
 //            $hslDocument = new HSLDocument($media);
 //            $thumbnailDocument = new ThumbnailDocument($media);
@@ -153,22 +284,20 @@ class UploadFileController extends Controller
             /**
              *
              *      *Document are ShouldQueue jobs
-             *  However, the implementation throws exceptions for various unsolved reasons
+             *  However, the implementation throws exceptions in unix
              *      -   ffmpeg save directory permission denied
              *      -   ffmpeg hsl .ts file not found in directory
              *
              *
-             *  These exceptions are not thrown, however, when handle is called directly
+             *  These exceptions are not thrown, however, when handle is called directly. For this reason, call the commented block when on UNIX
+             *
+             *  Windows works flawlessly
              */
 
             HSLDocument::dispatch($media);
             WebMDocument::dispatch($media);
             ThumbnailDocument::dispatch($media);
 
-
-//            $hslDocument->handle();
-//            $webMDocument->handle();
-//            $thumbnailDocument->handle();
 
 
 //            store your file into database
@@ -188,4 +317,6 @@ class UploadFileController extends Controller
         }
 
     }
+
+
 }

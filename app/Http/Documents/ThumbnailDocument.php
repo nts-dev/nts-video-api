@@ -39,7 +39,7 @@ class ThumbnailDocument implements MediaDocument
     private function runCommand()
     {
 
-       FFMpeg::fromDisk('public')
+       FFMpeg::fromDisk(self::DISK)
             ->open($this->media->getFile())
             ->each([5, 15, 25, 35], function ($ffmpeg, $seconds, $key) {
                 $ffmpeg->getFrameFromSeconds($seconds)->export()->save($this->media->getPrimaryPath() . "/thumbnails/thumb_{$key}.png");

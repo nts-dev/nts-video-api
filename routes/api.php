@@ -41,6 +41,8 @@ Route::post('/videos/upload', 'UploadFileController@store');
 
 Route::post('/videos/split', 'UploadFileController@split');
 
+Route::post('/videos/encode', 'UploadFileController@encodeExisting');
+
 Route::apiResource('modules', 'ModuleController');
 
 Route::apiResource('profiles', 'ProfileController');
