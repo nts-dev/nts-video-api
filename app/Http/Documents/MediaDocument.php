@@ -6,7 +6,7 @@ namespace App\Http\Documents;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 interface MediaDocument extends ShouldQueue {
-    const DISK = 'media';
+    const DISK = 'public';
     function handle();
 
 }

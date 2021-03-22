@@ -48,10 +48,6 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'media' => [
-            'driver' => 'local',
-            'root' =>'C:\Apache24\mediafilesystem',
-        ],
 
         'public' => [
             'driver' => 'local',

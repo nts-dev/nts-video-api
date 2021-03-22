@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Commons\Util;
 use App\Http\Documents\HSLDocument;
+use App\Http\Documents\MediaDocument;
 use App\Http\Documents\ThumbnailDocument;
 use App\Http\Documents\WebMDocument;
 use App\Http\Documents\model\Media;
@@ -121,21 +122,6 @@ class UploadFileController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      *
      *
@@ -176,25 +162,37 @@ class UploadFileController extends Controller
 
         $CATEGORY = $request->content_id;
 
-        $VIDEODIRECTORY = $PROJECT . "/" . $CATEGORY . "/video/" . $DOCID;
+        $PRIMARYPATH = $PROJECT . "/" . $CATEGORY;
 
-        $AUDIODIRECTORY = $PROJECT . "/" . $CATEGORY . "/audio/" . $DOCID;
+        $OLDVIDEODIRECTORY = $PRIMARYPATH . "/video/" . $DOCID;
 
-        $VIDEOPATH = $VIDEODIRECTORY . "/media.mp4";
+        $OLDAUDIODIRECTORY = $PRIMARYPATH . "/audio/" . $DOCID;
 
-        $AUDIOPATH = $AUDIODIRECTORY . "/media.mp3";
+        $VIDEOPATH = $OLDVIDEODIRECTORY . "/media.mp4";
 
-        $videoExists = Storage::disk('media')->exists($VIDEOPATH);
+        $AUDIOPATH = $OLDAUDIODIRECTORY . "/media.mp3";
 
-        $audioExists = Storage::disk('media')->exists($AUDIOPATH);
+        $videoExists = Storage::disk(MediaDocument::DISK)->exists($VIDEOPATH);
+
+        $audioExists = Storage::disk(MediaDocument::DISK)->exists($AUDIOPATH);
 
 
         $media = "";
+        $seed = "gjsYTBbUui" . $DOCID;
+        $GENERATEDFILENAME = hash('sha256', $seed);
 
+        $NEWDIRPATH = $PRIMARYPATH . "/" . $DOCID;
+
+        $NEWFILEPATH = "";
         if ($videoExists) {
-            $media = new Media($VIDEOPATH, $VIDEODIRECTORY);
+            $NEWFILEPATH = $NEWDIRPATH . "/" . $GENERATEDFILENAME . ".mp4";
+            $media = new Media($VIDEOPATH, $NEWFILEPATH);
+
+            Storage::disk(MediaDocument::DISK)->move($VIDEOPATH, $NEWDIRPATH);
+
         } else if ($audioExists) {
-            $media = new Media($AUDIOPATH, $AUDIODIRECTORY);
+            $NEWFILEPATH = $NEWDIRPATH . "/" . $GENERATEDFILENAME . ".mp4";
+            $media = new Media($AUDIOPATH, $NEWFILEPATH);
         }
 
         assert($media != null);
@@ -204,15 +202,15 @@ class UploadFileController extends Controller
         WebMDocument::dispatch($media);
         ThumbnailDocument::dispatch($media);
 
-        $document->disk = $videoExists ? $VIDEODIRECTORY : $AUDIODIRECTORY;
-        $document->raw_link = $videoExists ? $VIDEOPATH : $AUDIOPATH;
+        $document->disk = $NEWDIRPATH;
+        $document->raw_link = $NEWFILEPATH;
         $document->time_encoded = now();
         $document->save();
 
         return response()->json([
             "success" => true,
             "message" => "File successfully uploaded",
-            "file" => Storage::disk('media')->get($videoExists ? $VIDEOPATH : $AUDIOPATH),
+            "file" => Storage::disk('media')->get($NEWFILEPATH),
             // "type" => $mimeType,
         ]);
 
@@ -263,11 +261,13 @@ class UploadFileController extends Controller
 
         if ($files = $row_file) {
 
-            $subject = $request->subject_id;
-            $category = $request->content_id;
+            $SUBJECT = Util::generateProjectId($request->subject_id);
+            $CATEGORY = $request->content_id;
 
-            $PRIMARY_PATH = 'media/' . $subject . "/" . $category;
-            $FILE_PATH = 'public/' . $PRIMARY_PATH;
+            $PRIMARY_PATH = $SUBJECT . "/" . $CATEGORY;
+
+
+            $FILE_PATH = MediaDocument::DISK . '/' . $PRIMARY_PATH;
 
             //store file into document folder
             $file = $request->file->store($FILE_PATH);
@@ -277,9 +277,12 @@ class UploadFileController extends Controller
             $media = new Media($file_abs, $PRIMARY_PATH);
 
 
-//            $webMDocument = new WebMDocument($media);
-//            $hslDocument = new HSLDocument($media);
-//            $thumbnailDocument = new ThumbnailDocument($media);
+            $webMDocument = new WebMDocument($media);
+            $hslDocument = new HSLDocument($media);
+            $thumbnailDocument = new ThumbnailDocument($media);
+
+            $webMDocument->handle();
+            $hslDocument->handle();
 
             /**
              *
@@ -294,10 +297,9 @@ class UploadFileController extends Controller
              *  Windows works flawlessly
              */
 
-            HSLDocument::dispatch($media);
-            WebMDocument::dispatch($media);
-            ThumbnailDocument::dispatch($media);
-
+//            HSLDocument::dispatch($media);
+//            WebMDocument::dispatch($media);
+//            ThumbnailDocument::dispatch($media);
 
 
 //            store your file into database
