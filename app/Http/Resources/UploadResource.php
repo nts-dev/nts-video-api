@@ -26,7 +26,7 @@ class UploadResource extends JsonResource
             'videoLink_raw' => $ROOT . Storage::url($this->raw_link),
             'disk' => $this->disk,
             'asInDisk' => $this->raw_link,
-            'videoLink' => $ROOT . Storage::url($this->disk . "/hsl/manifest.m3u8"),
+            'videoLink' => $ROOT . Storage::url($this->disk . "/hsl/master.m3u8"),
             'publish' => $this->publish,
             'created_at' => (string)$this->created_at,
             'updated_at' => (string)$this->updated_at,
