@@ -160,9 +160,9 @@ class UploadFileController extends Controller
 
         $PROJECT = Util::generateProjectId($request->project_id);
 
-        $CATEGORY = $request->content_id;
+        $CATEGORY = $request->module_id;
 
-        $PRIMARYPATH = $PROJECT . "/" . $CATEGORY;
+        $PRIMARYPATH = 'public/media/' . $PROJECT . "/" . $CATEGORY;
 
         $OLDVIDEODIRECTORY = $PRIMARYPATH . "/video/" . $DOCID;
 
@@ -172,35 +172,40 @@ class UploadFileController extends Controller
 
         $AUDIOPATH = $OLDAUDIODIRECTORY . "/media.mp3";
 
-        $videoExists = Storage::disk(MediaDocument::DISK)->exists($VIDEOPATH);
+        $videoExists = Storage::exists($VIDEOPATH);
+        $audioExists = Storage::exists($AUDIOPATH);
 
-        $audioExists = Storage::disk(MediaDocument::DISK)->exists($AUDIOPATH);
 
-
-        $media = "";
-        $seed = "gjsYTBbUui" . $DOCID;
+        $seed = "gjsYTBbUui*&(*jh" . $DOCID;
         $GENERATEDFILENAME = hash('sha256', $seed);
 
         $NEWDIRPATH = $PRIMARYPATH . "/" . $DOCID;
-
         $NEWFILEPATH = "";
         if ($videoExists) {
-            $NEWFILEPATH = $NEWDIRPATH . "/" . $GENERATEDFILENAME . ".mp4";
-            $media = new Media($VIDEOPATH, $NEWFILEPATH);
 
-            Storage::disk(MediaDocument::DISK)->move($VIDEOPATH, $NEWDIRPATH);
-
-        } else if ($audioExists) {
+            /*
+             * Move to ../ dir
+             * rename file
+             */
             $NEWFILEPATH = $NEWDIRPATH . "/" . $GENERATEDFILENAME . ".mp4";
-            $media = new Media($AUDIOPATH, $NEWFILEPATH);
+            Storage::move($OLDVIDEODIRECTORY, $PRIMARYPATH . "/" . $DOCID);
+            Storage::move($PRIMARYPATH . "/" . $DOCID . "/media.mp4", $NEWFILEPATH);
         }
 
-        assert($media != null);
+
+        if($audioExists){
+            $NEWFILEPATH = $NEWDIRPATH . "/" . $GENERATEDFILENAME . ".mp3";
+            Storage::move($OLDAUDIODIRECTORY, $PRIMARYPATH . "/" . $DOCID);
+            Storage::move($PRIMARYPATH . "/" . $DOCID . "/media.mp3", $NEWFILEPATH);
+        }
+
+        $media = new Media($VIDEOPATH, $NEWFILEPATH);
 
 
-        HSLDocument::dispatch($media);
-        WebMDocument::dispatch($media);
-        ThumbnailDocument::dispatch($media);
+
+//        HSLDocument::dispatch($media);
+//        WebMDocument::dispatch($media);
+//        ThumbnailDocument::dispatch($media);
 
         $document->disk = $NEWDIRPATH;
         $document->raw_link = $NEWFILEPATH;
@@ -210,7 +215,7 @@ class UploadFileController extends Controller
         return response()->json([
             "success" => true,
             "message" => "File successfully uploaded",
-            "file" => Storage::disk('media')->get($NEWFILEPATH),
+//            "file" => Storage::disk(MediaDocument::DISK)->get($NEWFILEPATH),
             // "type" => $mimeType,
         ]);
 
