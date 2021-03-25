@@ -172,6 +172,11 @@ class AuthController extends Controller
         $CLIENT = $request->internal;
 
 
+
+        if (!isset($user) && empty($user) && $CLIENT == 1)
+            return $this->register($request);
+
+
         $checkedCredential = Hash::check($request->get('password'), $user->password);
         if (!$checkedCredential && $CLIENT == 0)
             return response()->json([
@@ -179,15 +184,12 @@ class AuthController extends Controller
                 'success' => false
             ], 401);
 
-        else if (!$checkedCredential && $CLIENT == 1)
-            return $this->register($request);
+
 
         // return response()->json([
         //     'id' => bcrypt($request->password),
         // ]);
 
-//        if (!isset($user) && empty($user))
-//            return $this->register($request);
 
 
         $tokenResult = $user->createToken('Personal Access Token');
