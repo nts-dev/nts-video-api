@@ -28,7 +28,7 @@ class UploadController extends Controller
      */
     public function index()
     {
-        return UploadResource::collection(Upload::with(['views', 'subtitle'])->paginate(200));
+        return UploadResource::collection(Upload::with(['views', 'subtitle']));
     }
 
     /**

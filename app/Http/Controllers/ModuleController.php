@@ -29,8 +29,7 @@ class ModuleController extends Controller
             ->orderBy('upload_count', 'asc')
             ->join('uploads', 'uploads.module_id', '=', 'modules.id')
             ->select(DB::raw('count(*) as upload_count, modules.*'))
-            ->groupBy('modules.id')
-            ->paginate(10));
+            ->groupBy('modules.id'));
 
 
     }
