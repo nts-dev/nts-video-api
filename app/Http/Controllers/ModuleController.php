@@ -53,7 +53,7 @@ class ModuleController extends Controller
         $item = Module::create([
             'user_id' => 1,
             'subject_id' => $request->subject_id,
-            'institution_id' => $request->institution_id,
+            'institution_id' => 1,
             'title' => $request->title,
             'description' => $request->description
         ]);
