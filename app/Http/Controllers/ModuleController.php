@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ModuleResource;
 use App\Module;
+use App\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,13 +27,18 @@ class ModuleController extends Controller
 
 
         return ModuleResource::collection(Module::orderBy('id', 'desc')
-            ->orderBy('upload_count', 'asc')
-            ->join('uploads', 'uploads.module_id', '=', 'modules.id')
-            ->select(DB::raw('count(*) as upload_count, modules.*'))
-            ->groupBy('modules.id')
             ->get());
 
 
+    }
+
+    public function modulesInSubject($id)
+    {
+//        return ModuleResource::collection()->where('subject_id', '=', $id)->get());
+
+        return ModuleResource::collection(Module::orderBy('id', 'desc')
+            ->where('subject_id', '=', $id)
+            ->get());
     }
 
     /**
