@@ -23,6 +23,7 @@ class ModuleResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'subject_id' => $this->subject_id,
             'user_id' => $this->user_id,
             'created_at' => (string) $this->created_at,
             'updated_at' => (string) $this->updated_at,
