@@ -14,7 +14,7 @@ class ModuleController extends Controller
 
     public function __construct()
     {
-         $this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -49,7 +49,7 @@ class ModuleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
         $item = Module::create([
             'user_id' => 1,
             'subject_id' => $request->subject_id,
@@ -85,15 +85,28 @@ class ModuleController extends Controller
     {
         $module = Module::find($id);
 
+        if ($module == null)
+            return response()->json([
+                'message' => 'No such item exist',
+                'item' => null], 401);
+
+
         // if ($request->user()->id !== $module->user_id) {
         //     return response()->json(['error' => 'You can only edit your own uploads.'], 403);
         // }
 
 
-        if ($module->update($request->only(['subject_id', 'institution_id', 'title', 'description']))) {
-            return $response = response()->json(['message' => 'Success'], 200);
+        if ($module->update($request->only(
+            ['title', 'description']))) {
+            return $response = response()->json(
+                [
+                    'message' => 'Success',
+                    'item' => new ModuleResource($module)
+                ], 200);
         } else
-            return $response = response()->json(['error' => 'Error occurred'], 401);
+            return $response = response()->json([
+                'message' => 'Error occurred',
+                'item' => new ModuleResource($module)], 401);
 
     }
 
