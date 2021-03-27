@@ -85,10 +85,10 @@ class ModuleController extends Controller
     {
         $module = Module::find($id);
 
-        if ($module == null)
-            return response()->json([
-                'message' => 'No such item exist',
-                'item' => null], 401);
+        if($module == null)
+            return $response = response()->json([
+                'message' => 'Error occurred',
+                'data' => null], 401);
 
 
         // if ($request->user()->id !== $module->user_id) {
@@ -101,23 +101,33 @@ class ModuleController extends Controller
             return $response = response()->json(
                 [
                     'message' => 'Success',
-                    'item' => new ModuleResource($module)
+                    new ModuleResource($module)
                 ], 200);
         } else
             return $response = response()->json([
                 'message' => 'Error occurred',
-                'item' => new ModuleResource($module)], 401);
+                new ModuleResource($module)], 401);
 
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param Request $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $module = Module::find($id);
+
+        if ($request->user()->id !== $module->user_id) {
+            return response()->json(['error' => 'You are not allowed to remove this.'], 403);
+        }
+
+        $module->delete();
+
+        return response()->json(null, 204);
+
     }
 }

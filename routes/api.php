@@ -47,6 +47,8 @@ Route::apiResource('modules', 'ModuleController');
 
 Route::get('/modules/subject/{id}', 'ModuleController@modulesInSubject');
 
+Route::get('/modules/subject/{id}', 'ModuleController@modulesInSubject');
+
 Route::apiResource('profiles', 'ProfileController');
 
 Route::apiResource('subjects', 'SubjectController');
