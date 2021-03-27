@@ -121,9 +121,9 @@ class ModuleController extends Controller
     {
         $module = Module::find($id);
 
-        if ($request->user()->id !== $module->user_id) {
-            return response()->json(['error' => 'You are not allowed to remove this.'], 403);
-        }
+//        if ($request->user()->id !== $module->user_id) {
+//            return response()->json(['error' => 'You are not allowed to remove this.'], 403);
+//        }
 
         $module->delete();
 
