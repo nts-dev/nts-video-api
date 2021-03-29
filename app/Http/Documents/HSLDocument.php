@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Kreait\Firebase\Storage;
 use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 Use Exception;
@@ -52,7 +53,7 @@ class HSLDocument implements MediaDocument
             ->addFormat($lowBitrate)
             ->addFormat($midBitrate)
             ->addFormat($highBitrate)
-            ->save($this->media->getPrimaryPath() . '/hsl/manifest.m3u8');
+            ->save(Storage::disk().$this->media->getPrimaryPath() . '/hsl/manifest.m3u8');
     }
 
 

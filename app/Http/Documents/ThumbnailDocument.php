@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Kreait\Firebase\Storage;
 use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
@@ -42,7 +43,7 @@ class ThumbnailDocument implements MediaDocument
        FFMpeg::fromDisk(self::DISK)
             ->open($this->media->getFile())
             ->each([5, 15, 25, 35], function ($ffmpeg, $seconds, $key) {
-                $ffmpeg->getFrameFromSeconds($seconds)->export()->save($this->media->getPrimaryPath() . "/thumbnails/thumb_{$key}.png");
+                $ffmpeg->getFrameFromSeconds($seconds)->export()->save(Storage::disk().$this->media->getPrimaryPath() . "/thumbnails/thumb_{$key}.png");
             });
     }
 }
