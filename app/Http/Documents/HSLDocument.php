@@ -48,12 +48,13 @@ class HSLDocument implements MediaDocument
         FFMpeg::fromDisk(self::DISK)
             ->open($this->media->getFile())
             ->exportForHLS()
+            ->toDisk($this->media->getPrimaryPath() . "/hsl")
             ->setSegmentLength(10) // optional
             ->setKeyFrameInterval(48) // optional
             ->addFormat($lowBitrate)
             ->addFormat($midBitrate)
             ->addFormat($highBitrate)
-            ->save(Storage::disk('public')->path('/').$this->media->getPrimaryPath() . '/hsl/manifest.m3u8');
+            ->save('manifest.m3u8');
     }
 
 

@@ -44,8 +44,9 @@ class WebMDocument implements MediaDocument
         FFMpeg::fromDisk(self::DISK)
             ->open($this->media->getFile())
             ->export()
+            ->toDisk($this->media->getPrimaryPath())
             ->inFormat($format)
-            ->save($this->media->getPrimaryPath() . '/web.webm');
+            ->save('web.webm');
 
 
     }
