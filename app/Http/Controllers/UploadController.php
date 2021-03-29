@@ -101,7 +101,7 @@ class UploadController extends Controller
             $media = new Media($file, $PRIMARYPATH);
 
 
-            Log::info(var_dump($media));
+            Log::info((array) $media);
 
 
             HSLDocument::dispatch($media);
