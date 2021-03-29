@@ -79,18 +79,17 @@ class UploadController extends Controller
             $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
-            $PRIMARY_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY. "/". $DOCID;
+            $PRIMARYPATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY;
+
+            $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY. "/". $DOCID;
 
 
-
-
-            $FILE_PATH =  $PRIMARY_PATH;
 
             //store file into document folder
             $file = $request->file->store($FILE_PATH);
             $file_abs = substr($file, 7); //remove 'public' from the path
 
-            $media = new Media($file_abs, $PRIMARY_PATH);
+            $media = new Media($file_abs, $PRIMARYPATH);
 
 
 
