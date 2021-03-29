@@ -11,6 +11,7 @@ use App\Http\Documents\WebMDocument;
 use Illuminate\Http\Request;
 use App\Upload;
 use App\Http\Resources\UploadResource;
+use Illuminate\Support\Facades\Log;
 use Validator, Redirect, Response, File;
 
 
@@ -100,7 +101,7 @@ class UploadController extends Controller
             $media = new Media($file, $PRIMARYPATH);
 
 
-            dd($media);
+            Log::info(var_dump($media));
 
 
             HSLDocument::dispatch($media);
