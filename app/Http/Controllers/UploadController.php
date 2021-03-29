@@ -100,6 +100,9 @@ class UploadController extends Controller
             $media = new Media($file, $PRIMARYPATH);
 
 
+            dd($media);
+
+
             HSLDocument::dispatch($media);
             WebMDocument::dispatch($media);
             ThumbnailDocument::dispatch($media);

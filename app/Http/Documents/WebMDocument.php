@@ -7,7 +7,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Kreait\Firebase\Storage;
 use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
@@ -46,7 +45,7 @@ class WebMDocument implements MediaDocument
             ->open($this->media->getFile())
             ->export()
             ->inFormat($format)
-            ->save(Storage::disk('public')->path('/').$this->media->getPrimaryPath() . '/web.webm');
+            ->save($this->media->getPrimaryPath() . '/web.webm');
 
 
     }
