@@ -11,9 +11,7 @@ use App\Http\Documents\WebMDocument;
 use Illuminate\Http\Request;
 use App\Upload;
 use App\Http\Resources\UploadResource;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Validator;
+use Validator, Redirect, Response, File;
 
 
 class UploadController extends Controller
@@ -46,7 +44,18 @@ class UploadController extends Controller
     public function store(Request $request)
     {
 
-        $this->validateInput($request);
+        $validator = Validator::make($request->all(),
+            [
+                'subject_id' => 'required',
+                'module_id' => 'required',
+                'title' => 'required',
+                'description' => 'required',
+                'file' => 'required|mimes:mp3,mp4,mkv',
+            ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success'=> false, 'message' => $validator->errors()], 401);
+        }
 
 
         $row_file = $request->file('file');
@@ -115,23 +124,7 @@ class UploadController extends Controller
         }
     }
 
-    private function validateInput(Request $request)
-    {
 
-        $validator = Validator::make($request->all(),
-            [
-                'subject_id' => 'required',
-                'module_id' => 'required',
-                'title' => 'required',
-                'description' => 'required',
-                'file' => 'required|mimes:mp3,mp4,mkv',
-            ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success'=> false, 'message' => $validator->errors()], 401);
-        }
-        return true;
-    }
 
     /**
      * Display the specified resource.
