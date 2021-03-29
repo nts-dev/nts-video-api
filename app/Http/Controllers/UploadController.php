@@ -54,13 +54,11 @@ class UploadController extends Controller
             ]);
 
         if ($validator->fails()) {
-            return response()->json(['success'=> false, 'message' => $validator->errors()], 401);
+            return response()->json(['success' => false, 'message' => $validator->errors()], 401);
         }
 
 
         $row_file = $request->file('file');
-
-
 
 
         $upload = Upload::create([
@@ -75,7 +73,7 @@ class UploadController extends Controller
 
         $document = Upload::find($upload->id);
 
-        if($document == null)
+        if ($document == null)
             return response()->json([
                 "success" => true,
                 "message" => "Error occurred",
@@ -90,16 +88,16 @@ class UploadController extends Controller
 
             $PRIMARYPATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY;
 
-            $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY. "/". $DOCID;
+            $TEMP = $SUBJECT . "/" . $CATEGORY;
 
+            $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
 
 
             //store file into document folder
             $file = $request->file->store($FILE_PATH);
-//            $file_abs = substr($file, 7); //remove 'public' from the path
+//            $file_abs = substr($file, 13); //remove 'public' from the path
 
-            $media = new Media($file, $PRIMARYPATH);
-
+            $media = new Media($file, $TEMP);
 
 
             HSLDocument::dispatch($media);
@@ -123,7 +121,6 @@ class UploadController extends Controller
 
         }
     }
-
 
 
     /**
