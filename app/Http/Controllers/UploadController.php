@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Commons\Util;
+use App\Http\Documents\HSLDocument;
+use App\Http\Documents\MediaDocument;
+use App\Http\Documents\model\Media;
+use App\Http\Documents\ThumbnailDocument;
+use App\Http\Documents\WebMDocument;
 use Illuminate\Http\Request;
 use App\Upload;
 use App\Http\Resources\UploadResource;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Validator;
 
 
 class UploadController extends Controller
@@ -40,34 +46,93 @@ class UploadController extends Controller
     public function store(Request $request)
     {
 
+        $this->validateInput($request);
 
-//        if (!$request->hasFile('media'))
-//            return response()->json(['data' => null, 'error' => 'Request has no media file'], 403);
+
+        $row_file = $request->file('file');
+
+
 
 
         $upload = Upload::create([
             'user_id' => $request->user()->id,
-//            'user_id' => 3,
             'title' => $request->title,
             'description' => $request->description,
             'module_id' => $request->module_id,
             'subject_id' => $request->subject_id,
             'upload_folder_index' => 0,
             'publish' => false,
-            'thumbnailLink' => '/thumbnail_main.jpg',
-            'videoLink' => '/manifest.m3u',
         ]);
 
-        return response()->json([
-            "success" => true,
-            "message" => "File successfully uploaded",
-            "Upload" => $upload,
-        ]);
+        $document = Upload::find($upload->id);
+
+        if($document == null)
+            return response()->json([
+                "success" => true,
+                "message" => "Error occurred",
+                "file" => null,
+            ]);
+
+        if ($files = $row_file) {
+
+            $SUBJECT = Util::generateProjectId($request->subject_id);
+            $CATEGORY = $request->content_id;
+            $DOCID = $upload->id;
+
+            $PRIMARY_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY. "/". $DOCID;
 
 
+
+
+            $FILE_PATH =  $PRIMARY_PATH;
+
+            //store file into document folder
+            $file = $request->file->store($FILE_PATH);
+            $file_abs = substr($file, 7); //remove 'public' from the path
+
+            $media = new Media($file_abs, $PRIMARY_PATH);
+
+
+
+            HSLDocument::dispatch($media);
+            WebMDocument::dispatch($media);
+            ThumbnailDocument::dispatch($media);
+
+
+//            store your file into database
+
+            $document->disk = $FILE_PATH;
+            $document->raw_link = $file;
+            $document->time_encoded = now();
+            $document->save();
+
+            return response()->json([
+                "success" => true,
+                "message" => "File successfully uploaded",
+                "file" => $document,
+                // "type" => $mimeType,
+            ]);
+
+        }
     }
 
+    private function validateInput(Request $request)
+    {
 
+        $validator = Validator::make($request->all(),
+            [
+                'subject_id' => 'required',
+                'content_id' => 'required',
+                'title' => 'required',
+                'description' => 'required',
+                'file' => 'required|mimes:mp3,mp4,mkv',
+            ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success'=> false, 'message' => $validator->errors()], 401);
+        }
+        return true;
+    }
 
     /**
      * Display the specified resource.
