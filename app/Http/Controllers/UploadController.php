@@ -86,9 +86,9 @@ class UploadController extends Controller
             $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
-            $PRIMARYPATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY;
+            $PRIMARYPATH = 'media/' . $SUBJECT . "/" . $CATEGORY;
 
-            $TEMP = $SUBJECT . "/" . $CATEGORY;
+//            $TEMP = 'media/'.$SUBJECT . "/" . $CATEGORY;
 
             $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
 
@@ -97,7 +97,7 @@ class UploadController extends Controller
             $file = $request->file->store($FILE_PATH);
 //            $file_abs = substr($file, 13); //remove 'public' from the path
 
-            $media = new Media($file, $TEMP);
+            $media = new Media($file, $PRIMARYPATH);
 
 
             HSLDocument::dispatch($media);
