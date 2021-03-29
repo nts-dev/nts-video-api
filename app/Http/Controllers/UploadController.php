@@ -76,7 +76,7 @@ class UploadController extends Controller
         if ($files = $row_file) {
 
             $SUBJECT = Util::generateProjectId($request->subject_id);
-            $CATEGORY = $request->content_id;
+            $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
             $PRIMARY_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY. "/". $DOCID;
@@ -122,7 +122,7 @@ class UploadController extends Controller
         $validator = Validator::make($request->all(),
             [
                 'subject_id' => 'required',
-                'content_id' => 'required',
+                'module_id' => 'required',
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'required|mimes:mp3,mp4,mkv',
