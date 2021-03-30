@@ -45,8 +45,8 @@ class HSLDocument implements MediaDocument
         $midBitrate = (new X264('aac'))->setKiloBitrate(500);
         $highBitrate = (new X264('aac'))->setKiloBitrate(1000);
 
-        FFMpeg::fromDisk(self::DISK)
-            ->open($this->media->getFile())
+        FFMpeg::
+            open($this->media->getFile())
             ->exportForHLS()
             ->toDisk($this->media->getPrimaryPath() . "/hsl")
             ->setSegmentLength(10) // optional

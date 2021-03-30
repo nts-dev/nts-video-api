@@ -89,9 +89,10 @@ class UploadController extends Controller
 
             $PRIMARYPATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
 
-//            $TEMP = 'media/'.$SUBJECT . "/" . $CATEGORY;
 
             $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
+
+            $STORAGE = public_path('media/');
 
 
             //store file into document folder
