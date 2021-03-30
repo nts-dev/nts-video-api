@@ -35,8 +35,6 @@ class UploadResource extends JsonResource
             'user_picture' => isset($this->user->profile) ? $this->user->profile->profile_pic_url : null,
             'total_views' => isset($this->views) ? $this->views->count() : 0,
             'subtitles' => $this->subtitle,
-//            'module_name' => $this->module->title,
-//            'module_description' => $this->module->description,
             'subject_id' => $this->subject_id,
             'user_id' => $this->user_id,
             'module_id' => $this->module_id,
