@@ -25,6 +25,7 @@ class UploadResource extends JsonResource
             'sprintLink' => $ROOT . Storage::url($this->disk . "/sprint/index.jpg"),
             'videoLink_raw' => $ROOT . Storage::url($this->raw_link),
             'disk' => $this->disk,
+            'webm' => $ROOT . Storage::url($this->disk . "/web.webm"),
             'asInDisk' => $this->raw_link,
             'videoLink' => $ROOT . Storage::url($this->disk . "/hsl/master.m3u8"),
             'publish' => $this->publish,
