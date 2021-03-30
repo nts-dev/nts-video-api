@@ -100,9 +100,9 @@ class UploadController extends Controller
 
             //store file into document folder
             $file = $request->file->store($FILE_PATH);
-            $file_abs = substr($file, 7); //remove 'public' from the path
+//            $file_abs = substr($file, 7); //remove 'public' from the path
 
-            $media = new Media($file_abs, $PRIMARYPATH);
+            $media = new Media($file, $PRIMARYPATH);
 
 
             Log::info((array) $media);
