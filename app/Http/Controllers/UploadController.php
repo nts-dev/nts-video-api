@@ -88,7 +88,7 @@ class UploadController extends Controller
             $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
-            $PRIMARYPATH = Storage::disk('public').'/media/'. $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
+            $PRIMARYPATH = 'public/media/'. $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
 
 
             $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
@@ -109,8 +109,8 @@ class UploadController extends Controller
 
 
             HSLDocument::dispatch($media);
-            WebMDocument::dispatch($media);
-            ThumbnailDocument::dispatch($media);
+//            WebMDocument::dispatch($media);
+//            ThumbnailDocument::dispatch($media);
 
 
 //            store your file into database
