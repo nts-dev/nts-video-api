@@ -110,7 +110,7 @@ class UploadController extends Controller
 
             HSLDocument::dispatch($media);
 //            WebMDocument::dispatch($media);
-//            ThumbnailDocument::dispatch($media);
+            ThumbnailDocument::dispatch($media);
 
 
 //            store your file into database
