@@ -44,7 +44,7 @@ class ThumbnailDocument implements MediaDocument
             ->each([5, 15, 25, 35], function ($ffmpeg, $seconds, $key) {
                 $ffmpeg->getFrameFromSeconds($seconds)
                     ->export()
-                    ->save($this->media->getPrimaryPath() . "/thumbnails/thumb_{$key}.png");
+                    ->save("thumbnails/thumb_{$key}.png");
             });
     }
 }
