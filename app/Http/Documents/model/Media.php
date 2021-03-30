@@ -8,9 +8,11 @@ class Media
 {
 
     private  $file;
-    public function __construct($file)
+    private $primaryPath;
+    public function __construct($file, $primaryPath)
     {
         $this->file = $file;
+        $this->primaryPath = $primaryPath;
     }
 
     /**
@@ -19,6 +21,14 @@ class Media
     public function getFile()
     {
         return $this->file;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrimaryPath()
+    {
+        return $this->primaryPath;
     }
 
 
