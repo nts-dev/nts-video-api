@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Upload;
 use App\Http\Resources\UploadResource;
 use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Storage;
 use Validator, Redirect, Response, File;
 
 
@@ -87,7 +88,7 @@ class UploadController extends Controller
             $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
-            $PRIMARYPATH = 'media/'. $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
+            $PRIMARYPATH = Storage::disk('public').'/media/'. $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
 
 
             $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
