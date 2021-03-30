@@ -56,7 +56,7 @@ class UploadController extends Controller
             ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => $validator->errors()], 401);
+            return response()->json(['state' => false, 'message' => $validator->errors()], 401);
         }
 
 
@@ -77,7 +77,7 @@ class UploadController extends Controller
 
         if ($document == null)
             return response()->json([
-                "status" => false,
+                "state" => false,
                 "message" => "Error occurred",
                 "file" => null,
             ]);
@@ -121,7 +121,7 @@ class UploadController extends Controller
             $document->save();
 
             return response()->json([
-                "status" => true,
+                "state" => true,
                 "message" => "File successfully uploaded",
                 "file" => $document,
                 // "type" => $mimeType,
