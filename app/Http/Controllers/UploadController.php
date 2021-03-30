@@ -87,7 +87,7 @@ class UploadController extends Controller
             $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
-            $PRIMARYPATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
+            $PRIMARYPATH = 'media/' . $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
 
 
             $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
