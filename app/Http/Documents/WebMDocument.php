@@ -46,7 +46,7 @@ class WebMDocument implements MediaDocument
         open($this->media->getFile())
             ->export()
             ->inFormat($format)
-            ->save(Storage::disk("public").$this->media->getPrimaryPath().'/web.webm');
+            ->save($this->media->getPrimaryPath().'/web.webm');
 
 
     }
