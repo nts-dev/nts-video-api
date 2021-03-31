@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Subject;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+define('ROOTPATH', __DIR__);
 
 class UploadResource extends JsonResource
 {
@@ -16,14 +17,14 @@ class UploadResource extends JsonResource
      */
     public function toArray($request)
     {
-        $ROOT = "http://" . $_SERVER['HTTP_HOST'];
+        $ROOT = "https://" . $_SERVER['HTTP_HOST'] . '/nts-programs/nts-video-api/storage/app/';
         return [
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
             'thumbnailLink' => $ROOT . Storage::url($this->disk . "/thumbnails/pic" . rand(0, 3) . ".png"),
             'sprintLink' => $ROOT . Storage::url($this->disk . "/sprint/index.jpg"),
-            'videoLink_raw' => $ROOT . Storage::url($this->raw_link),
+            'videoLink_raw' => $ROOT . $this->raw_link,
             'disk' => $this->disk,
             'webm' => $ROOT . Storage::url($this->disk . "/web.webm"),
             'asInDisk' => $this->raw_link,

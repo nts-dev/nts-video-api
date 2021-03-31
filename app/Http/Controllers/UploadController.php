@@ -112,7 +112,6 @@ class UploadController extends Controller
             ThumbnailDocument::dispatch($media);
             WebMDocument::dispatch($media);
 
-
 //            store your file into database
 
             $document->disk = $FILE_PATH;
