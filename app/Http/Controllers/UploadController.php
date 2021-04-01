@@ -34,7 +34,10 @@ class UploadController extends Controller
      */
     public function index()
     {
-        return UploadResource::collection(Upload::orderBy('id', 'desc')->get());
+
+        return UploadResource::collection(Upload::orderBy('id', 'desc')
+            ->get());
+
     }
 
     /**
