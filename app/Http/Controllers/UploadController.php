@@ -34,7 +34,9 @@ class UploadController extends Controller
      */
     public function index()
     {
-        return UploadResource::collection(Upload::with(['views', 'subtitle']));
+        return UploadResource::collection(Upload::orderBy('id', 'desc')
+            ->get());
+
     }
 
     /**
