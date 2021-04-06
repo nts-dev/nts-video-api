@@ -56,7 +56,7 @@ class HSLDocument implements MediaDocument
             ->addFormat($lowBitrate)
             ->addFormat($midBitrate)
             ->addFormat($highBitrate)
-            ->save('hsl/master.m3u8');
+            ->save($this->media->getPrimaryPath(). '/hsl/master.m3u8');
     }
 
 
