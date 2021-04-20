@@ -43,7 +43,13 @@ Route::post('/videos/split', 'UploadFileController@split');
 
 Route::post('/videos/encode', 'UploadFileController@encodeExisting');
 
+
+
 Route::apiResource('modules', 'ModuleController');
+
+Route::apiResource('comments', 'UploadCommentController');
+
+Route::apiResource('timelineinfo', 'UploadTimelineInformationController');
 
 Route::get('/modules/subject/{id}', 'ModuleController@modulesInSubject');
 
