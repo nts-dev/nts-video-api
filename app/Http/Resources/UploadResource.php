@@ -17,9 +17,10 @@ class UploadResource extends JsonResource
      */
     public function toArray($request)
     {
-//        $URL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $URL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+//$_SERVER[REQUEST_URI]";
 
-        $ROOT = $this->getUriPart().'/nts-video-api/storage/app/';
+        $ROOT = $URL.'/nts-video-api/storage/app/';
         return [
             'id' => $this->id,
             'title' => $this->title,
