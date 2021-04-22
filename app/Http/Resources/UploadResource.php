@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use App\Subject;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
-define('ROOTPATH', __DIR__);
+
 
 class UploadResource extends JsonResource
 {
@@ -17,10 +17,10 @@ class UploadResource extends JsonResource
      */
     public function toArray($request)
     {
-        $URL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+        $URL =  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 //$_SERVER[REQUEST_URI]";
 
-        $ROOT = $URL.'/nts-video-api/storage/app/';
+        $ROOT = '/nts-programs/nts-video-api/storage/app/';
         return [
             'id' => $this->id,
             'title' => $this->title,
