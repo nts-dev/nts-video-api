@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Commons\HashCode;
 use App\Http\Commons\Util;
 use App\Http\Documents\HSLDocument;
 use App\Http\Documents\MediaDocument;
@@ -11,6 +12,8 @@ use App\Http\Documents\WebMDocument;
 use Illuminate\Http\Request;
 use App\Upload;
 use App\Http\Resources\UploadResource;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Storage;
 use Validator, Redirect, Response, File;
@@ -49,6 +52,7 @@ class UploadController extends Controller
     public function store(Request $request)
     {
 
+
         $validator = Validator::make($request->all(),
             [
                 'subject_id' => 'required',
@@ -58,10 +62,14 @@ class UploadController extends Controller
                 'file' => 'required|mimes:mp3,mp4,mkv',
             ]);
 
+//        Log::info((array) $validator);
+
         if ($validator->fails()) {
             return response()->json(['state' => false, 'message' => $validator->errors()], 401);
         }
 
+
+//        return response()->json(['state' => true, 'message' => 'success'], 201);
 
         $row_file = $request->file('file');
 
@@ -74,6 +82,7 @@ class UploadController extends Controller
             'subject_id' => $request->subject_id,
             'upload_folder_index' => 0,
             'publish' => false,
+            'hash' => HashCode::encrypt($request->title . now()),
         ]);
 
         $document = Upload::find($upload->id);
@@ -91,7 +100,7 @@ class UploadController extends Controller
             $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
-            $PRIMARYPATH = 'public/media/'. $SUBJECT . "/" . $CATEGORY. "/" . $DOCID;
+            $PRIMARYPATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
 
 
             $FILE_PATH = 'public/media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
@@ -106,9 +115,6 @@ class UploadController extends Controller
 //            $file_abs = substr($file, 7); //remove 'public' from the path
 
             $media = new Media($file, $PRIMARYPATH);
-
-
-            Log::info((array) $media);
 
 
             HSLDocument::dispatch($media);
@@ -141,8 +147,33 @@ class UploadController extends Controller
      */
     public function show($id)
     {
-        //
-        return new UploadResource(Upload::find($id));
+        $upload = Upload::findOrFail($id);
+        return new UploadResource($upload);
+
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param string $hashed
+     * @return \Illuminate\Http\Response
+     */
+    public function showByHashedString($hashed)
+    {
+
+        $upload = Upload::where('hash', trim($hashed))->first();
+
+        if (!isset($upload->id))
+            return response()->json(
+                [
+                    'state' => false,
+                    'error' => 'Requested resource not found.',
+                    'data' => $upload,
+                ], 403);
+
+
+        return new UploadResource($upload);
 
     }
 

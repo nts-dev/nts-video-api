@@ -33,13 +33,20 @@ Route::get('guard', 'AuthController@login')->name('login');
 
 Route::apiResource('videos', 'UploadController');
 
+Route::get('videos/hash/{id}', 'UploadController@showByHashedString');
+
 Route::get('/videos/subjects/{id}', 'UploadController@uploadsInSubject');
 
 Route::get('/videos/category/{id}', 'UploadController@uploadsInCategory');
-
+/**
+ *
+ * Temporary routes
+ */
 Route::post('/videos/upload', 'UploadFileController@store');
 
 Route::post('/videos/split', 'UploadFileController@split');
+
+Route::post('/videos/updatehash', 'UploadFileController@updateHashKeys');
 
 Route::post('/videos/encode', 'UploadFileController@encodeExisting');
 

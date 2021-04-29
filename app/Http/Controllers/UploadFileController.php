@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Commons\HashCode;
 use App\Http\Commons\Util;
 use App\Http\Documents\HSLDocument;
 use App\Http\Documents\MediaDocument;
@@ -12,6 +13,7 @@ use App\Http\Documents\SplittedDocument;
 use App\Jobs\ConvertToHSLDocument;
 use App\Jobs\ConvertToWebMDocumnet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Config;
 use League\Flysystem\FileNotFoundException;
@@ -59,6 +61,16 @@ class UploadFileController extends Controller
      *
      */
 
+
+    public function updateHashKeys(){
+
+        $items = DB::table('uploads')->get();
+        foreach ($items as $upload) {
+            $document = Upload::find($upload->id);
+            $document->hash = HashCode::encrypt($document->title . now());
+            $document->save();
+        }
+    }
 
     public function split(Request $request)
     {

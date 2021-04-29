@@ -167,6 +167,18 @@ class AuthController extends Controller
     private function handleOfflineLogin(Request $request)
     {
 
+        $validator = Validator::make($request->all(),
+            [
+                'password' => 'required',
+                'email' => 'required',
+            ]);
+
+//        Log::info((array) $validator);
+
+        if ($validator->fails()) {
+            return response()->json(['state' => false, 'message' => $validator->errors()], 401);
+        }
+
 
         $user = User::where('email', $request->get('email'))->first();
         $CLIENT = $request->internal;

@@ -8,7 +8,20 @@ class Upload extends Model
 {
     //
 
-    protected $fillable = ['title', 'description', 'thumbnailLink', 'videoLink', 'module_id', 'user_id', 'publish', 'subject_id', 'upload_folder_index', 'raw_link', 'disk'];
+    protected $fillable = [
+        'title',
+        'description',
+        'thumbnailLink',
+        'videoLink',
+        'module_id',
+        'user_id',
+        'publish',
+        'subject_id',
+        'upload_folder_index',
+        'raw_link',
+        'disk',
+        'hash',
+    ];
 
     public function user()
     {

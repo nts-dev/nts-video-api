@@ -21,8 +21,10 @@ class UploadResource extends JsonResource
 //$_SERVER[REQUEST_URI]";
 
         $ROOT = '/nts-programs/nts-video-api/storage/app/';
+//        $ROOT = '/nts-video-api/storage/app/';
         return [
             'id' => $this->id,
+            'hash' => $this->hash,
             'title' => $this->title,
             'description' => $this->description,
             'thumbnailLink' => $ROOT . $this->disk . "/thumbnails/pic" . rand(0, 3) . ".png",
