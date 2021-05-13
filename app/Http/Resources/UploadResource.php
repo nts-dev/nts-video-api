@@ -29,7 +29,7 @@ class UploadResource extends JsonResource
             'description' => $this->description,
             'thumbnailLink' => $ROOT . $this->disk . "/thumbnails/pic" . rand(0, 3) . ".png",
             'sprintLink' => $ROOT . $this->disk . "/sprint/index.jpg",
-            'videoLink_raw' => $ROOT . $this->raw_link,
+            'videoLink_raw' => $URL. $ROOT . $this->raw_link,
             'disk' => $this->disk,
             'webm' => $ROOT . $this->disk . "/web.webm",
             'asInDisk' => $this->raw_link,
