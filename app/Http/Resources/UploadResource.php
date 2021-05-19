@@ -17,11 +17,11 @@ class UploadResource extends JsonResource
      */
     public function toArray($request)
     {
-        $URL =  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-//$_SERVER[REQUEST_URI]";
+        $URL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+        $ROOT = !$this->isUriLocalOrNTS($URL)
+            ? '/nts-programs/nts-video-api/storage/app/'
+            : '/storage/app/';
 
-        $ROOT = '/nts-programs/nts-video-api/storage/app/';
-//        $ROOT = '/nts-video-api/storage/app/';
         return [
             'id' => $this->id,
             'hash' => $this->hash,
@@ -29,7 +29,7 @@ class UploadResource extends JsonResource
             'description' => $this->description,
             'thumbnailLink' => $ROOT . $this->disk . "/thumbnails/pic" . rand(0, 3) . ".png",
             'sprintLink' => $ROOT . $this->disk . "/sprint/index.jpg",
-            'videoLink_raw' => $URL. $ROOT . $this->raw_link,
+            'videoLink_raw' => $URL . $ROOT . $this->raw_link,
             'disk' => $this->disk,
             'webm' => $ROOT . $this->disk . "/web.webm",
             'asInDisk' => $this->raw_link,
@@ -49,10 +49,11 @@ class UploadResource extends JsonResource
         ];
     }
 
-    private function getUriPart() {
-        $URL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        $index = strpos($URL, "public") > 1 ? strpos($URL, "public") : strpos($URL, "/api/");
-        return substr(0, $index);
+    private function isUriLocalOrNTS($url)
+    {
+        $URL_PARTS = parse_url($url);
+        $knownHosts = array("localhost.ntsprograms", "video.nts.nl");
+        return in_array($URL_PARTS["host"], $knownHosts);
     }
 
 

@@ -139,6 +139,11 @@ class UploadController extends Controller
     }
 
 
+    public function stream(Request $request){
+
+    }
+
+
     /**
      * Display the specified resource.
      *
@@ -161,6 +166,7 @@ class UploadController extends Controller
      */
     public function showByHashedString($hashed)
     {
+
 
         $upload = Upload::where('hash', trim($hashed))->first();
 
