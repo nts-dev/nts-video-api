@@ -15,7 +15,7 @@ use App\Http\Resources\UploadResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Kreait\Firebase\Storage;
+//use Kreait\Firebase\Storage;
 use Validator, Redirect, Response, File;
 
 
@@ -27,7 +27,7 @@ class UploadController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        //$this->middleware('auth:api');
     }
 
     /**
@@ -58,9 +58,8 @@ class UploadController extends Controller
                 'subject_id' => 'required',
                 'module_id' => 'required',
                 'title' => 'required',
-                'description' => 'required',
-                'file' => 'required|mimes:mp3,mp4,mkv',
-            ]);
+                'description' => 'required',             
+            ]); //    'file' => 'required|mimes:mp3,mp4,mkv',
 
 //        Log::info((array) $validator);
 
@@ -75,7 +74,7 @@ class UploadController extends Controller
 
 
         $upload = Upload::create([
-            'user_id' => $request->user()->id,
+            'user_id' => 9392, //$request->user()->id
             'title' => $request->title,
             'description' => $request->description,
             'module_id' => $request->module_id,
@@ -139,11 +138,6 @@ class UploadController extends Controller
     }
 
 
-    public function stream(Request $request){
-
-    }
-
-
     /**
      * Display the specified resource.
      *
@@ -166,7 +160,6 @@ class UploadController extends Controller
      */
     public function showByHashedString($hashed)
     {
-
 
         $upload = Upload::where('hash', trim($hashed))->first();
 
