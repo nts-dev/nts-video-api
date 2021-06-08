@@ -9,13 +9,18 @@ use App\Http\Documents\MediaDocument;
 use App\Http\Documents\model\Media;
 use App\Http\Documents\ThumbnailDocument;
 use App\Http\Documents\WebMDocument;
+use FFMpeg\Format\Video\WebM;
+use FFMpeg\Format\Video\X264;
 use Illuminate\Http\Request;
 use App\Upload;
 use App\Http\Resources\UploadResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+
 //use Kreait\Firebase\Storage;
+use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use Validator, Redirect, Response, File;
 
 
@@ -58,7 +63,7 @@ class UploadController extends Controller
                 'subject_id' => 'required',
                 'module_id' => 'required',
                 'title' => 'required',
-                'description' => 'required',             
+                'description' => 'required',
             ]); //    'file' => 'required|mimes:mp3,mp4,mkv',
 
 //        Log::info((array) $validator);
@@ -115,10 +120,47 @@ class UploadController extends Controller
 
             $media = new Media($file, $PRIMARYPATH);
 
+/*
+            try {
+                $lowBitrate = (new X264('aac'))->setKiloBitrate(250);
+                $midBitrate = (new X264('aac'))->setKiloBitrate(500);
+                $highBitrate = (new X264('aac'))->setKiloBitrate(1000);
 
-            HSLDocument::dispatch($media);
-            ThumbnailDocument::dispatch($media);
-            WebMDocument::dispatch($media);
+                FFMpeg::open($media->getFile())
+                    ->exportForHLS()
+                    ->setSegmentLength(10) // optional
+                    ->setKeyFrameInterval(48) // optional
+                    ->addFormat($lowBitrate)
+                    ->addFormat($midBitrate)
+                    ->addFormat($highBitrate)
+                    ->save($media->getPrimaryPath() . '/hsl/master.m3u8');
+
+
+                FFMpeg::open($media->getFile())
+                    ->each([5, 15, 25, 35], function ($media, $ffmpeg, $seconds, $key) {
+                        $ffmpeg->getFrameFromSeconds($seconds)
+                            ->export()
+                            ->save($media->getPrimaryPath() . "/thumbnails/pic{$key}.png");
+                    });
+
+
+                $format = (new WebM());
+                FFMpeg::open($media->getFile())
+                    ->export()
+                    ->inFormat($format)
+                    ->save($media->getPrimaryPath() . '/web.webm');
+
+
+            } catch (EncodingException $exception) {
+                $errorLog = $exception->getErrorOutput();
+                Log::debug((array)$errorLog);
+//                var_dump($errorLog);
+            }
+*/
+
+//            HSLDocument::dispatch($media);
+//            ThumbnailDocument::dispatch($media);
+//            WebMDocument::dispatch($media);
 
 //            store your file into database
 
@@ -133,7 +175,6 @@ class UploadController extends Controller
                 "file" => $document,
                 // "type" => $mimeType,
             ]);
-
         }
     }
 
