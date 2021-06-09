@@ -120,49 +120,24 @@ class UploadController extends Controller
 
             $media = new Media($file, $PRIMARYPATH);
 
-/*
-            try {
-                $lowBitrate = (new X264('aac'))->setKiloBitrate(250);
-                $midBitrate = (new X264('aac'))->setKiloBitrate(500);
-                $highBitrate = (new X264('aac'))->setKiloBitrate(1000);
-
-                FFMpeg::open($media->getFile())
-                    ->exportForHLS()
-                    ->setSegmentLength(10) // optional
-                    ->setKeyFrameInterval(48) // optional
-                    ->addFormat($lowBitrate)
-                    ->addFormat($midBitrate)
-                    ->addFormat($highBitrate)
-                    ->save($media->getPrimaryPath() . '/hsl/master.m3u8');
-
-
-                FFMpeg::open($media->getFile())
-                    ->each([5, 15, 25, 35], function ($media, $ffmpeg, $seconds, $key) {
-                        $ffmpeg->getFrameFromSeconds($seconds)
-                            ->export()
-                            ->save($media->getPrimaryPath() . "/thumbnails/pic{$key}.png");
-                    });
-
-
-                $format = (new WebM());
-                FFMpeg::open($media->getFile())
-                    ->export()
-                    ->inFormat($format)
-                    ->save($media->getPrimaryPath() . '/web.webm');
-
-
-            } catch (EncodingException $exception) {
-                $errorLog = $exception->getErrorOutput();
-                Log::debug((array)$errorLog);
-//                var_dump($errorLog);
-            }
-*/
-
 //            HSLDocument::dispatch($media);
-//            ThumbnailDocument::dispatch($media);
-//            WebMDocument::dispatch($media);
+            // ThumbnailDocument::dispatch($media);
 
-//            store your file into database
+            FFMpeg::open($media->getFile())
+                ->getFrameFromSeconds(4)
+                ->export()
+                ->save($media->getPrimaryPath() . "/thumbnails/pic2.png");
+
+            $format = (new WebM());
+
+            FFMpeg::open($media->getFile())
+                ->export()
+                ->inFormat($format)
+                ->save($media->getPrimaryPath() . '/web.webm');
+
+
+//           store your file into database
+
 
             $document->disk = $FILE_PATH;
             $document->raw_link = $file;
