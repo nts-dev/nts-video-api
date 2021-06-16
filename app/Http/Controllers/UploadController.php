@@ -65,7 +65,8 @@ class UploadController extends Controller
                 'module_id' => 'required',
                 'title' => 'required',
                 'description' => 'required',
-            ]); //    'file' => 'required|mimes:mp3,mp4,mkv',
+                'file' => 'required|mimes:mp3,mp4,mkv',
+            ]); //
 
 //        Log::info((array) $validator);
 
