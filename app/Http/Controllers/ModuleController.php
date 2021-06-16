@@ -7,6 +7,7 @@ use App\Module;
 use App\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class ModuleController extends Controller
 {
@@ -119,7 +120,9 @@ class ModuleController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $module = Module::find($id);
+
+
+        $module = Module::findOrFail($id);
 
 //        if ($request->user()->id !== $module->user_id) {
 //            return response()->json(['error' => 'You are not allowed to remove this.'], 403);
@@ -127,7 +130,14 @@ class ModuleController extends Controller
 
         $module->delete();
 
-        return response()->json(null, 204);
+        $response = [
+            'data' => [
+                'success' => true,
+                'message' => 'Successfully Deleted'
+            ]
+        ];
+
+        return Response::json($response);
 
     }
 }
