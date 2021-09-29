@@ -15,8 +15,6 @@ use App\User;
 |
 */
 
-
-
 Route::apiResource('endpoint', 'EndPointTest');
 
 Route::post('logout', 'AuthController@logout');

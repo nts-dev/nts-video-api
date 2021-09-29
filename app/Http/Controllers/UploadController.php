@@ -59,7 +59,7 @@ class UploadController extends Controller
                 'module_id' => 'required',
                 'title' => 'required',
                 'description' => 'required',
-                'file' => 'required|mimes:mp3,mp4,mkv',
+                //'file' => 'required|mimes:mp3,mp4,mkv,h5p',
             ]);
 
 //        Log::info((array) $validator);
@@ -111,7 +111,7 @@ class UploadController extends Controller
 
 
             //store file into document folder
-            $file = $request->file->store($FILE_PATH);
+            $file = $request->file->store($FILE_PATH, 'public');
 //            $file_abs = substr($file, 7); //remove 'public' from the path
 
             $media = new Media($file, $PRIMARYPATH);
