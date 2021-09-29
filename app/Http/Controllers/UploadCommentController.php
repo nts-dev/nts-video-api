@@ -34,8 +34,8 @@ class UploadCommentController extends Controller
         $item = UploadComment::updateOrCreate(
             ['upload_id' => $request->upload_id,],
             [
-                'upload_id' => $request->upload_id,
-                'content' => $request->content,
+                'upload_id' => $request->input('upload_id'),
+                'content' => $request->input('content'),
             ]
         );
 
@@ -53,9 +53,8 @@ class UploadCommentController extends Controller
     public function show($upload_id)
     {
         $item = UploadComment::where('upload_id', $upload_id)->get();
-       return new UploadCommentResource($item);
+        return new UploadCommentResource($item);
     }
-
 
 
     /**

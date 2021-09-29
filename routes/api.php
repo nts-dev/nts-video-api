@@ -36,6 +36,8 @@ Route::get('videos/hash/{id}', 'UploadController@showByHashedString');
 Route::get('/videos/subjects/{id}', 'UploadController@uploadsInSubject');
 
 Route::get('/videos/category/{id}', 'UploadController@uploadsInCategory');
+
+Route::get('/videos/encode/{id}', 'UploadController@encode');
 /**
  *
  * Temporary routes

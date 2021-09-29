@@ -9,13 +9,19 @@ use App\Http\Documents\MediaDocument;
 use App\Http\Documents\model\Media;
 use App\Http\Documents\ThumbnailDocument;
 use App\Http\Documents\WebMDocument;
+use FFMpeg\Format\Video\WebM;
+use FFMpeg\Format\Video\X264;
 use Illuminate\Http\Request;
 use App\Upload;
 use App\Http\Resources\UploadResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Kreait\Firebase\Storage;
+
+//use Kreait\Firebase\Storage;
+use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use Validator, Redirect, Response, File;
 
 
@@ -27,7 +33,7 @@ class UploadController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        //$this->middleware('auth:api');
     }
 
     /**
@@ -62,6 +68,8 @@ class UploadController extends Controller
                 //'file' => 'required|mimes:mp3,mp4,mkv,h5p',
             ]);
 
+
+
 //        Log::info((array) $validator);
 
         if ($validator->fails()) {
@@ -75,7 +83,7 @@ class UploadController extends Controller
 
 
         $upload = Upload::create([
-            'user_id' => $request->user()->id,
+            'user_id' => 1, //$request->user()->id
             'title' => $request->title,
             'description' => $request->description,
             'module_id' => $request->module_id,
@@ -114,14 +122,7 @@ class UploadController extends Controller
             $file = $request->file->store($FILE_PATH, 'public');
 //            $file_abs = substr($file, 7); //remove 'public' from the path
 
-            $media = new Media($file, $PRIMARYPATH);
-
-
-            HSLDocument::dispatch($media);
-            ThumbnailDocument::dispatch($media);
-            WebMDocument::dispatch($media);
-
-//            store your file into database
+//           store your file into database
 
             $document->disk = $FILE_PATH;
             $document->raw_link = $file;
@@ -130,17 +131,13 @@ class UploadController extends Controller
 
             return response()->json([
                 "state" => true,
-                "message" => "File successfully uploaded",
-                "file" => $document,
+                "name" => $document->id,
+
+//                "message" => "File successfully uploaded",
+//                "file" => $document,
                 // "type" => $mimeType,
             ]);
-
         }
-    }
-
-
-    public function stream(Request $request){
-
     }
 
 
@@ -167,7 +164,6 @@ class UploadController extends Controller
     public function showByHashedString($hashed)
     {
 
-
         $upload = Upload::where('hash', trim($hashed))->first();
 
         if (!isset($upload->id))
@@ -192,7 +188,6 @@ class UploadController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
         $upload = Upload::find($id);
         if ($request->user()->id !== $upload->user_id) {
             return response()->json(['error' => 'You can only edit your own uploads.'], 403);
@@ -232,13 +227,45 @@ class UploadController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $upload = Upload::find($id);
-        if ($request->user()->id !== $upload->user_id) {
-            return response()->json(['error' => 'You are not allowed to remove this.'], 403);
-        }
+
+        $upload = Upload::findOrFail($id);
+//        if ($request->user()->id !== $upload->user_id) {
+//            return response()->json(['error' => 'You are not allowed to remove this.'], 403);
+//        }
 
         $upload->delete();
 
-        return response()->json(null, 204);
+//        return response()->json(["response" => true], 204);
+        $response = [
+            'data' => [
+                'success' => true,
+                'message' => 'Successfully Deleted'
+            ]
+        ];
+
+        return Response::json($response);
+    }
+
+    public function encode($id)
+    {
+        $document = Upload::find($id);
+
+        $media = new Media($document->raw_link, $document->disk);
+
+        ThumbnailDocument::dispatch($media);
+        WebMDocument::dispatch($media);
+        HSLDocument::dispatch($media);
+
+        $cmd = 'C:\xampp\php\php.exe C:\xampp\htdocs\nts-programs\nts-video-api\artisan queue:work --tries=5 --stop-when-empty';
+
+        pclose(popen("start /B " . $cmd, "r"));
+
+        $response = [
+            'data' => [
+                'success' => true
+            ]
+        ];
+
+        return Response::json($response);
     }
 }
