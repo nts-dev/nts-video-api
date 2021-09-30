@@ -12,6 +12,7 @@ use App\Http\Resources\UploadResource;
 use App\Upload;
 use File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Redirect;
 use Response;
 use Validator;
@@ -73,9 +74,6 @@ class UploadController extends Controller
 //        return response()->json(['state' => true, 'message' => 'success'], 201);
 
         $row_file = $request->file('file');
-        $extension = $request->file('file')->extension();
-        dd($extension);
-
 
         $upload = Upload::create([
             'user_id' => 1, //$request->user()->id
@@ -103,34 +101,38 @@ class UploadController extends Controller
             $CATEGORY = $request->module_id;
             $DOCID = $upload->id;
 
-            $PRIMARYPATH = 'media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
-
-
             $FILE_PATH = 'media/' . $SUBJECT . "/" . $CATEGORY . "/" . $DOCID;
 
-//            $STORAGE = public_path('media/');
-//
-//            dd($STORAGE);
+            $extension = $request->file('file')->extension();
 
+            if ($extension == 'zip' || $extension == 'h5p') {
 
-            //store file into document folder
-            $path = $request->file->store($FILE_PATH, 'public');
-//            $file_abs = substr($file, 7); //remove 'public' from the path
+                $originalName = $request->file('file')->getClientOriginalName();
 
-//           store your file into database
+                $path = $request->file('file')->storeAs(
+                    $FILE_PATH,
+                    $originalName,
+                    'public'
+                );
 
+                Storage::move($path, $FILE_PATH . "/" . $originalName . ".h5p");
+
+                $document->raw_link = $FILE_PATH . "/" . $originalName . ".h5p";
+
+            } else {
+
+                $path = $request->file->store($FILE_PATH, 'public');
+                $document->raw_link = $path;
+            }
+
+            //store your file into database
             $document->disk = $FILE_PATH;
-            $document->raw_link = $path;
             $document->time_encoded = now();
             $document->save();
 
             return response()->json([
                 "state" => true,
                 "name" => $document->id,
-
-//                "message" => "File successfully uploaded",
-//                "file" => $document,
-                // "type" => $mimeType,
             ]);
         }
     }
