@@ -115,9 +115,9 @@ class UploadController extends Controller
                     'public'
                 );
 
-                Storage::move($path, $FILE_PATH . "/" . $originalName . ".h5p");
+//                Storage::move($path, $FILE_PATH . "/" . $originalName . ".h5p");
 
-                $raw_link = $path;//$FILE_PATH . "/" . $originalName . ".h5p";
+                $raw_link = $FILE_PATH . "/" . $originalName . ".h5p";
 
             } else {
 
