@@ -5,24 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Commons\HashCode;
 use App\Http\Commons\Util;
 use App\Http\Documents\HSLDocument;
-use App\Http\Documents\MediaDocument;
 use App\Http\Documents\model\Media;
 use App\Http\Documents\ThumbnailDocument;
 use App\Http\Documents\WebMDocument;
-use FFMpeg\Format\Video\WebM;
-use FFMpeg\Format\Video\X264;
-use Illuminate\Http\Request;
-use App\Upload;
 use App\Http\Resources\UploadResource;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Upload;
+use File;
+use Illuminate\Http\Request;
+use Redirect;
+use Response;
+use Validator;
 
 //use Kreait\Firebase\Storage;
-use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
-use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
-use Validator, Redirect, Response, File;
 
 
 class UploadController extends Controller
@@ -69,7 +63,6 @@ class UploadController extends Controller
             ]);
 
 
-
 //        Log::info((array) $validator);
 
         if ($validator->fails()) {
@@ -80,6 +73,8 @@ class UploadController extends Controller
 //        return response()->json(['state' => true, 'message' => 'success'], 201);
 
         $row_file = $request->file('file');
+        $extension = $request->file('file')->extension();
+        dd($extension);
 
 
         $upload = Upload::create([
@@ -119,13 +114,13 @@ class UploadController extends Controller
 
 
             //store file into document folder
-            $file = $request->file->store($FILE_PATH, 'public');
+            $path = $request->file->store($FILE_PATH, 'public');
 //            $file_abs = substr($file, 7); //remove 'public' from the path
 
 //           store your file into database
 
             $document->disk = $FILE_PATH;
-            $document->raw_link = $file;
+            $document->raw_link = $path;
             $document->time_encoded = now();
             $document->save();
 
@@ -256,7 +251,12 @@ class UploadController extends Controller
         WebMDocument::dispatch($media);
         HSLDocument::dispatch($media);
 
-        $cmd = 'C:\xampp\php\php.exe C:\xampp\htdocs\nts-programs\nts-video-api\artisan queue:work --tries=5 --stop-when-empty';
+        if ($_SERVER['SERVER_NAME'] == 'localhost') {
+            $cmd = 'C:\xampp\php\php.exe C:\xampp\htdocs\nts-programs\nts-video-api\artisan queue:work --tries=5 --stop-when-empty';
+        } else {
+            $cmd = 'C:\php7\php.exe C:\Apache24\nts-video-api\artisan queue:work --tries=5 --stop-when-empty';
+        }
+
 
         pclose(popen("start /B " . $cmd, "r"));
 
