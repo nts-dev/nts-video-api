@@ -117,7 +117,7 @@ class UploadController extends Controller
 
                 Storage::move($path, $FILE_PATH . "/" . $originalName . ".h5p");
 
-                $raw_link = $FILE_PATH . "/" . $originalName . ".h5p";
+                $raw_link = $path;//$FILE_PATH . "/" . $originalName . ".h5p";
 
             } else {
 
