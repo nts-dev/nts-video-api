@@ -117,16 +117,17 @@ class UploadController extends Controller
 
                 Storage::move($path, $FILE_PATH . "/" . $originalName . ".h5p");
 
-                $document->raw_link = $FILE_PATH . "/" . $originalName . ".h5p";
+                $raw_link = $FILE_PATH . "/" . $originalName . ".h5p";
 
             } else {
 
                 $path = $request->file->store($FILE_PATH, 'public');
-                $document->raw_link = $path;
+                $raw_link = $path;
             }
 
             //store your file into database
             $document->disk = $FILE_PATH;
+            $document->raw_link = $raw_link;
             $document->time_encoded = now();
             $document->save();
 
